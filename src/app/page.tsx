@@ -7,12 +7,14 @@ import { IdeaForm } from '@/components/idea-form';
 import { IdeaList } from '@/components/idea-list';
 import { Lightbulb } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebase';
 import { collection, query, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export interface Idea extends RankIdeasByCreativityOutput {
   id: string;
   idea: string;
+  authorName: string;
+  userId: string;
   createdAt: any; // Firestore Timestamp
 }
 
@@ -20,6 +22,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const firestore = useFirestore();
+  const { user } = useUser();
 
   const ideasQuery = useMemoFirebase(
     () => (firestore ? query(collection(firestore, 'ideas'), orderBy('creativityScore', 'desc')) : null),
@@ -28,11 +31,14 @@ export default function Home() {
   
   const { data: ideas, isLoading: isLoadingIdeas } = useCollection<Idea>(ideasQuery);
 
-  const handleAddIdea = async (ideaText: string) => {
+  const handleAddIdea = async (ideaText: string, authorName: string) => {
     setIsLoading(true);
     try {
       if (!firestore) {
         throw new Error('Firestore is not initialized');
+      }
+      if (!user) {
+        throw new Error('User is not authenticated');
       }
       // 1. Get AI analysis from server action
       const result = await submitIdeaAction({ idea: ideaText });
@@ -42,6 +48,8 @@ export default function Home() {
       await addDoc(ideasCollection, {
         ...result,
         idea: ideaText,
+        authorName: authorName,
+        userId: user.uid,
         createdAt: serverTimestamp(),
       });
       // No need to manually update state, useCollection will do it.

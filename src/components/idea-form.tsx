@@ -13,10 +13,16 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { Loader2, Send } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 
 const formSchema = z.object({
+  authorName: z.string().min(2, {
+    message: 'Tên phải có ít nhất 2 ký tự.',
+  }).max(50, {
+    message: 'Tên không được vượt quá 50 ký tự.',
+  }),
   idea: z.string().min(10, {
     message: 'Ý tưởng phải có ít nhất 10 ký tự.',
   }).max(500, {
@@ -25,7 +31,7 @@ const formSchema = z.object({
 });
 
 type IdeaFormProps = {
-  onSubmit: (ideaText: string) => Promise<void>;
+  onSubmit: (ideaText: string, authorName: string) => Promise<void>;
   isLoading: boolean;
 };
 
@@ -33,12 +39,13 @@ export function IdeaForm({ onSubmit, isLoading }: IdeaFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      authorName: '',
       idea: '',
     },
   });
 
   const handleFormSubmit = async (values: z.infer<typeof formSchema>) => {
-    await onSubmit(values.idea);
+    await onSubmit(values.idea, values.authorName);
     form.reset();
   };
 
@@ -53,10 +60,23 @@ export function IdeaForm({ onSubmit, isLoading }: IdeaFormProps) {
           <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
             <FormField
               control={form.control}
+              name="authorName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tên của bạn</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Nhập tên của bạn..." {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
               name="idea"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="sr-only">Ý tưởng của bạn</FormLabel>
+                  <FormLabel>Ý tưởng</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Ví dụ: Một ứng dụng di động kết nối những người yêu thú cưng để cùng dắt chó đi dạo..."

@@ -15,7 +15,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Bot, Link as LinkIcon } from 'lucide-react';
+import { Bot, Link as LinkIcon, User } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -56,8 +56,12 @@ export function IdeaCard({ idea }: IdeaCardProps) {
             <span className="font-bold text-lg text-primary">{creativityPercentage}%</span>
           </div>
         </CardHeader>
-        <CardContent className="flex-grow">
-          <p className="text-muted-foreground text-base whitespace-pre-wrap">
+        <CardContent className="flex-grow space-y-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <User className="h-4 w-4" />
+            <span>Đăng bởi: <strong>{idea.authorName || 'Người dùng ẩn danh'}</strong></span>
+          </div>
+          <p className="text-foreground text-base whitespace-pre-wrap">
             {idea.idea}
           </p>
         </CardContent>

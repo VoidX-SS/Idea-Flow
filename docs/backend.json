@@ -10,6 +10,14 @@
           "type": "string",
           "description": "The text content of the idea."
         },
+        "authorName": {
+          "type": "string",
+          "description": "The name of the user who submitted the idea."
+        },
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user who submitted the idea."
+        },
         "creativityScore": {
           "type": "number",
           "description": "The creativity score of the idea as determined by Gemini AI."
@@ -30,6 +38,8 @@
       },
       "required": [
         "idea",
+        "authorName",
+        "userId",
         "creativityScore",
         "analysis",
         "source",
