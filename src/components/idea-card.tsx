@@ -56,7 +56,7 @@ export function IdeaCard({ idea }: IdeaCardProps) {
           </div>
         </CardHeader>
         <CardContent className="flex-grow">
-          <p className="text-muted-foreground text-base line-clamp-4">
+          <p className="text-muted-foreground text-base">
             {idea.idea}
           </p>
         </CardContent>
@@ -70,7 +70,9 @@ export function IdeaCard({ idea }: IdeaCardProps) {
                 </div>
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground pt-2 space-y-4">
-                <p>{idea.analysis}</p>
+                <div className="prose prose-sm dark:prose-invert max-w-none">
+                    <ReactMarkdown>{idea.analysis}</ReactMarkdown>
+                </div>
                 {idea.source && (
                   <div>
                     <h4 className="font-semibold flex items-center gap-2 mb-2 text-foreground">
