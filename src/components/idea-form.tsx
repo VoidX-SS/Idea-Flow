@@ -33,6 +33,7 @@ const authors = [
   'Trần Quang Huy',
   'Tô Anh Tần',
   'Nguyễn Phan Tấn Khoa',
+  'Lê Mậu Phục',
 ];
 
 const formSchema = z.object({
