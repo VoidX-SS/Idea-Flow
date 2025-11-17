@@ -17,6 +17,7 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { Bot, Link as LinkIcon } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 type IdeaCardProps = {
   idea: Idea;
@@ -56,7 +57,7 @@ export function IdeaCard({ idea }: IdeaCardProps) {
           </div>
         </CardHeader>
         <CardContent className="flex-grow">
-          <p className="text-muted-foreground text-base">
+          <p className="text-muted-foreground text-base whitespace-pre-wrap">
             {idea.idea}
           </p>
         </CardContent>
@@ -71,7 +72,7 @@ export function IdeaCard({ idea }: IdeaCardProps) {
               </AccordionTrigger>
               <AccordionContent className="text-sm text-muted-foreground pt-2 space-y-4">
                 <div className="prose prose-sm dark:prose-invert max-w-none">
-                    <ReactMarkdown>{idea.analysis}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{idea.analysis}</ReactMarkdown>
                 </div>
                 {idea.source && (
                   <div>
@@ -81,8 +82,9 @@ export function IdeaCard({ idea }: IdeaCardProps) {
                     </h4>
                     <div className="prose prose-sm dark:prose-invert max-w-none">
                       <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
                         components={{
-                          a: ({node, ...props}) => <a {...props} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline" />
+                          a: ({node, ...props}) => <a {...props} rel="noopener noreferrer" className="text-primary hover:underline" />
                         }}
                       >
                         {idea.source}
