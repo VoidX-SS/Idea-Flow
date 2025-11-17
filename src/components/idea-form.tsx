@@ -12,16 +12,32 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
 import { Loader2, Send } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 
+const authors = [
+  'Phạm Quỳnh Ngân',
+  'Nguyễn An Khang',
+  'Nguyễn Minh Nhân',
+  'Đặng Thị Hoàng Yến',
+  'Huỳnh Xuân Hoàng Tuấn',
+  'Bùi Thị Huyền Trang',
+  'Trần Quang Huy',
+  'Tô Anh Tần',
+  'Nguyễn Phan Tấn Khoa',
+];
+
 const formSchema = z.object({
-  authorName: z.string().min(2, {
-    message: 'Tên phải có ít nhất 2 ký tự.',
-  }).max(50, {
-    message: 'Tên không được vượt quá 50 ký tự.',
+  authorName: z.string({
+    required_error: 'Vui lòng chọn tên của bạn.',
   }),
   idea: z.string().min(10, {
     message: 'Ý tưởng phải có ít nhất 10 ký tự.',
@@ -39,7 +55,6 @@ export function IdeaForm({ onSubmit, isLoading }: IdeaFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      authorName: '',
       idea: '',
     },
   });
@@ -64,9 +79,20 @@ export function IdeaForm({ onSubmit, isLoading }: IdeaFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Tên của bạn</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Nhập tên của bạn..." {...field} />
-                  </FormControl>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn tên của bạn từ danh sách..." />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {authors.map((author) => (
+                        <SelectItem key={author} value={author}>
+                          {author}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
