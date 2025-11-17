@@ -15,7 +15,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Bot } from 'lucide-react';
+import { Bot, Link as LinkIcon } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 type IdeaCardProps = {
   idea: Idea;
@@ -68,8 +69,25 @@ export function IdeaCard({ idea }: IdeaCardProps) {
                   <span>Phân tích từ AI</span>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground pt-2">
-                {idea.analysis}
+              <AccordionContent className="text-sm text-muted-foreground pt-2 space-y-4">
+                <p>{idea.analysis}</p>
+                {idea.source && (
+                  <div>
+                    <h4 className="font-semibold flex items-center gap-2 mb-2 text-foreground">
+                      <LinkIcon className="h-4 w-4" />
+                      Nguồn tham khảo
+                    </h4>
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                      <ReactMarkdown
+                        components={{
+                          a: ({node, ...props}) => <a {...props} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline" />
+                        }}
+                      >
+                        {idea.source}
+                      </ReactMarkdown>
+                    </div>
+                  </div>
+                )}
               </AccordionContent>
             </AccordionItem>
           </Accordion>
