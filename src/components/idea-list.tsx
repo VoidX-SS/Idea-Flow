@@ -8,9 +8,10 @@ import { BrainCircuit } from 'lucide-react';
 type IdeaListProps = {
   ideas: Idea[];
   isLoading: boolean;
+  onDelete: (id: string) => void;
 };
 
-export function IdeaList({ ideas, isLoading }: IdeaListProps) {
+export function IdeaList({ ideas, isLoading, onDelete }: IdeaListProps) {
   if (isLoading && ideas.length === 0) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -39,7 +40,7 @@ export function IdeaList({ ideas, isLoading }: IdeaListProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
       {ideas.map((idea) => (
-        <IdeaCard key={idea.id} idea={idea} />
+        <IdeaCard key={idea.id} idea={idea} onDelete={onDelete} />
       ))}
     </div>
   );

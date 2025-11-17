@@ -15,15 +15,28 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Bot, Link as LinkIcon, User } from 'lucide-react';
+import { Bot, Link as LinkIcon, User, Trash2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Button } from './ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 type IdeaCardProps = {
   idea: Idea;
+  onDelete: (id: string) => void;
 };
 
-export function IdeaCard({ idea }: IdeaCardProps) {
+export function IdeaCard({ idea, onDelete }: IdeaCardProps) {
   const creativityPercentage = Math.round(idea.creativityScore * 100);
 
   let badgeVariant: "default" | "secondary" | "destructive" | "outline" = "secondary";
@@ -45,8 +58,30 @@ export function IdeaCard({ idea }: IdeaCardProps) {
 
   return (
     <article className="flex flex-col animate-in fade-in-0 zoom-in-95">
-      <Card className="flex flex-col flex-grow shadow-md hover:shadow-xl transition-shadow duration-300">
-        <CardHeader>
+      <Card className="flex flex-col flex-grow shadow-md hover:shadow-xl transition-shadow duration-300 relative">
+        <div className="absolute top-2 right-2">
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Bạn có chắc chắn muốn xóa?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Hành động này không thể được hoàn tác. Ý tưởng này sẽ bị xóa vĩnh viễn khỏi máy chủ.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Hủy</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => onDelete(idea.id)} className="bg-destructive hover:bg-destructive/90">Xóa</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+        </div>
+
+        <CardHeader className="pr-12">
           <div className="flex justify-between items-start gap-2">
             <CardTitle className="text-lg font-bold">Điểm sáng tạo</CardTitle>
             <Badge variant={badgeVariant} className="flex-shrink-0">{badgeText}</Badge>

@@ -8,7 +8,7 @@ import { IdeaList } from '@/components/idea-list';
 import { Lightbulb } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useCollection, useFirestore, useMemoFirebase, useUser } from '@/firebase';
-import { collection, query, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, orderBy, addDoc, serverTimestamp, doc, deleteDoc } from 'firebase/firestore';
 
 export interface Idea extends RankIdeasByCreativityOutput {
   id: string;
@@ -65,6 +65,39 @@ export default function Home() {
     }
   };
 
+  const handleDeleteIdea = async (ideaId: string) => {
+    if (!firestore || !user) {
+      toast({
+        variant: 'destructive',
+        title: 'Lỗi',
+        description: 'Bạn phải đăng nhập để xóa ý tưởng.',
+      });
+      return;
+    }
+    const ideaRef = doc(firestore, 'ideas', ideaId);
+    // Optional: Check if the user is the author before deleting
+    // const ideaToDelete = ideas?.find(idea => idea.id === ideaId);
+    // if (ideaToDelete && ideaToDelete.userId !== user.uid) {
+    //   toast({ variant: 'destructive', title: 'Lỗi', description: 'Bạn không có quyền xóa ý tưởng này.' });
+    //   return;
+    // }
+    
+    try {
+      await deleteDoc(ideaRef);
+      toast({
+        title: 'Thành công',
+        description: 'Đã xóa ý tưởng.',
+      });
+    } catch (e) {
+       toast({
+        variant: 'destructive',
+        title: 'Lỗi',
+        description: 'Không thể xóa ý tưởng. Vui lòng thử lại.',
+      });
+      console.error(e);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <main className="container mx-auto p-4 md:p-8">
@@ -80,7 +113,11 @@ export default function Home() {
           <IdeaForm onSubmit={handleAddIdea} isLoading={isLoading} />
         </div>
 
-        <IdeaList ideas={ideas || []} isLoading={isLoadingIdeas || isLoading} />
+        <IdeaList 
+          ideas={ideas || []} 
+          isLoading={isLoadingIdeas || isLoading}
+          onDelete={handleDeleteIdea}
+        />
       </main>
       <footer className="text-center p-4 text-muted-foreground text-sm">
         <p>Tạo bởi Firebase Studio</p>
