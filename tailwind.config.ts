@@ -10,8 +10,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Arial', 'sans-serif'],
-        headline: ['Arial', 'sans-serif'],
+        body: ['"Be Vietnam Pro"', 'sans-serif'],
+        headline: ['"Be Vietnam Pro"', 'sans-serif'],
         code: ['monospace'],
       },
       colors: {
