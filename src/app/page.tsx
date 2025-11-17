@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import type { RankIdeasByCreativityOutput } from '@/ai/flows/rank-ideas-by-creativity';
 import { submitIdeaAction } from '@/app/actions';
 import { IdeaForm } from '@/components/idea-form';
@@ -8,7 +8,7 @@ import { IdeaList } from '@/components/idea-list';
 import { Lightbulb } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy } from 'firebase/firestore';
+import { collection, query, orderBy, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export interface Idea extends RankIdeasByCreativityOutput {
   id: string;
@@ -22,7 +22,7 @@ export default function Home() {
   const firestore = useFirestore();
 
   const ideasQuery = useMemoFirebase(
-    () => firestore ? query(collection(firestore, 'ideas'), orderBy('creativityScore', 'desc')) : null,
+    () => (firestore ? query(collection(firestore, 'ideas'), orderBy('creativityScore', 'desc')) : null),
     [firestore]
   );
   
@@ -31,7 +31,19 @@ export default function Home() {
   const handleAddIdea = async (ideaText: string) => {
     setIsLoading(true);
     try {
-      await submitIdeaAction({ idea: ideaText });
+      if (!firestore) {
+        throw new Error('Firestore is not initialized');
+      }
+      // 1. Get AI analysis from server action
+      const result = await submitIdeaAction({ idea: ideaText });
+
+      // 2. Save the idea and analysis to Firestore from the client
+      const ideasCollection = collection(firestore, 'ideas');
+      await addDoc(ideasCollection, {
+        ...result,
+        idea: ideaText,
+        createdAt: serverTimestamp(),
+      });
       // No need to manually update state, useCollection will do it.
     } catch (e) {
       toast({
