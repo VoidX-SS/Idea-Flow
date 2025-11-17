@@ -4,25 +4,31 @@ import {
   rankIdeasByCreativity,
   type RankIdeasByCreativityInput,
 } from '@/ai/flows/rank-ideas-by-creativity';
-import type { Idea } from '@/app/page';
+import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { initializeFirebase } from '@/firebase';
 
 export async function submitIdeaAction(
   input: RankIdeasByCreativityInput
-): Promise<Idea> {
+): Promise<void> {
   try {
     if (!input.idea) {
-        throw new Error('Idea text cannot be empty.');
+      throw new Error('Idea text cannot be empty.');
     }
 
     const result = await rankIdeasByCreativity(input);
     
-    return {
+    // Initialize Firebase on the server-side to get Firestore instance
+    const { firestore } = initializeFirebase();
+    const ideasCollection = collection(firestore, 'ideas');
+
+    await addDoc(ideasCollection, {
       ...result,
-      id: crypto.randomUUID(),
       idea: input.idea,
-    };
+      createdAt: serverTimestamp(),
+    });
+
   } catch (error) {
     console.error('Error in submitIdeaAction:', error);
-    throw new Error('Failed to rank idea using AI.');
+    throw new Error('Failed to save or rank idea.');
   }
 }

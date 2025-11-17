@@ -1,39 +1,43 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { RankIdeasByCreativityOutput } from '@/ai/flows/rank-ideas-by-creativity';
 import { submitIdeaAction } from '@/app/actions';
 import { IdeaForm } from '@/components/idea-form';
 import { IdeaList } from '@/components/idea-list';
 import { Lightbulb } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, query, orderBy } from 'firebase/firestore';
 
 export interface Idea extends RankIdeasByCreativityOutput {
   id: string;
   idea: string;
+  createdAt: any; // Firestore Timestamp
 }
 
 export default function Home() {
-  const [ideas, setIdeas] = useState<Idea[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const firestore = useFirestore();
+
+  const ideasQuery = useMemoFirebase(
+    () => firestore ? query(collection(firestore, 'ideas'), orderBy('creativityScore', 'desc')) : null,
+    [firestore]
+  );
+  
+  const { data: ideas, isLoading: isLoadingIdeas } = useCollection<Idea>(ideasQuery);
 
   const handleAddIdea = async (ideaText: string) => {
     setIsLoading(true);
     try {
-      const newIdea = await submitIdeaAction({ idea: ideaText });
-      
-      setIdeas(prevIdeas => {
-        const updatedIdeas = [newIdea, ...prevIdeas];
-        updatedIdeas.sort((a, b) => b.creativityScore - a.creativityScore);
-        return updatedIdeas;
-      });
-
+      await submitIdeaAction({ idea: ideaText });
+      // No need to manually update state, useCollection will do it.
     } catch (e) {
       toast({
         variant: 'destructive',
         title: 'Lỗi',
-        description: 'Không thể phân tích ý tưởng. Vui lòng thử lại.',
+        description: 'Không thể phân tích hoặc lưu ý tưởng. Vui lòng thử lại.',
       });
       console.error(e);
     } finally {
@@ -56,7 +60,7 @@ export default function Home() {
           <IdeaForm onSubmit={handleAddIdea} isLoading={isLoading} />
         </div>
 
-        <IdeaList ideas={ideas} isLoading={isLoading} />
+        <IdeaList ideas={ideas || []} isLoading={isLoadingIdeas || isLoading} />
       </main>
       <footer className="text-center p-4 text-muted-foreground text-sm">
         <p>Tạo bởi Firebase Studio</p>

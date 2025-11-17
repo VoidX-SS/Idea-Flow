@@ -6,40 +6,39 @@
       "type": "object",
       "description": "Represents an idea submitted by a user.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the Idea entity."
-        },
-        "content": {
+        "idea": {
           "type": "string",
           "description": "The text content of the idea."
-        },
-        "submissionDate": {
-          "type": "string",
-          "description": "The date and time when the idea was submitted.",
-          "format": "date-time"
         },
         "creativityScore": {
           "type": "number",
           "description": "The creativity score of the idea as determined by Gemini AI."
         },
-        "analysisDetails": {
+        "analysis": {
           "type": "string",
           "description": "Details from Gemini AI analysis about similar existing ideas and their applications."
+        },
+        "source": {
+          "type": "string",
+          "description": "A markdown formatted string of sources to prove the existence of the idea."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The timestamp when the idea was created."
         }
       },
       "required": [
-        "id",
-        "content",
-        "submissionDate",
+        "idea",
         "creativityScore",
-        "analysisDetails"
+        "analysis",
+        "source",
+        "createdAt"
       ]
     }
   },
   "auth": {
     "providers": [
-      "password",
       "anonymous"
     ]
   },
@@ -52,7 +51,7 @@
           "schema": {
             "$ref": "#/backend/entities/Idea"
           },
-          "description": "Stores idea submitted by any user. No authorization required.",
+          "description": "Stores ideas submitted by any user. No authorization required for now.",
           "params": [
             {
               "name": "ideaId",
@@ -61,7 +60,6 @@
           ]
         }
       }
-    ],
-    "reasoning": "The data structure is designed to store and retrieve user-submitted ideas efficiently and securely. It leverages a flat collection (`ideas`) to store all ideas, making retrieval simple and scalable.  This design prioritizes ease of querying and displaying ideas for all users, a key requirement of the application. Authorization is not required because any user can read and write to the `ideas` collection.  To fulfill the requirement that all users can view all ideas, there is no user-specific data or nested subcollections. This simplifies the security rules since all documents in the collection have the same access rules.\n\nThis structure ensures Authorization Independence since there are no dependencies on data from other documents or collections. It also satisfies the 'Rules are not Filters' (QAPs) principle, as list operations do not require complex filtering based on user roles or permissions."
+    ]
   }
 }

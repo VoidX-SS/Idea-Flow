@@ -10,7 +10,7 @@
  * Key Security Decisions:
  * - No authorization is required for read or write operations, which means any user can create, modify, or delete ideas.
  * - User listing is allowed since all ideas are public.
- * - Data validation is disabled, allowing any data to be written.
+ * - Data validation is disabled, allowing any data to be written. This is for rapid prototyping and should be tightened in production.
  */
 rules_version = '2';
 service cloud.firestore {
@@ -26,8 +26,7 @@ service cloud.firestore {
      * @principle No authorization is enforced. Any user can read and write data.
      */
     match /ideas/{ideaId} {
-      allow get, list: if true;
-      allow create, update, delete: if true;
+      allow read, write: if true;
     }
   }
 }

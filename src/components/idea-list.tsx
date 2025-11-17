@@ -26,7 +26,7 @@ export function IdeaList({ ideas, isLoading }: IdeaListProps) {
     );
   }
 
-  if (ideas.length === 0) {
+  if (!isLoading && ideas.length === 0) {
     return (
       <div className="text-center text-muted-foreground py-16 border-2 border-dashed rounded-lg">
         <BrainCircuit className="mx-auto h-12 w-12 mb-4" />
