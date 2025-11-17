@@ -1,0 +1,67 @@
+{
+  "entities": {
+    "Idea": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Idea",
+      "type": "object",
+      "description": "Represents an idea submitted by a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Idea entity."
+        },
+        "content": {
+          "type": "string",
+          "description": "The text content of the idea."
+        },
+        "submissionDate": {
+          "type": "string",
+          "description": "The date and time when the idea was submitted.",
+          "format": "date-time"
+        },
+        "creativityScore": {
+          "type": "number",
+          "description": "The creativity score of the idea as determined by Gemini AI."
+        },
+        "analysisDetails": {
+          "type": "string",
+          "description": "Details from Gemini AI analysis about similar existing ideas and their applications."
+        }
+      },
+      "required": [
+        "id",
+        "content",
+        "submissionDate",
+        "creativityScore",
+        "analysisDetails"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/ideas/{ideaId}",
+        "definition": {
+          "entityName": "Idea",
+          "schema": {
+            "$ref": "#/backend/entities/Idea"
+          },
+          "description": "Stores idea submitted by any user. No authorization required.",
+          "params": [
+            {
+              "name": "ideaId",
+              "description": "The unique identifier for the idea document."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The data structure is designed to store and retrieve user-submitted ideas efficiently and securely. It leverages a flat collection (`ideas`) to store all ideas, making retrieval simple and scalable.  This design prioritizes ease of querying and displaying ideas for all users, a key requirement of the application. Authorization is not required because any user can read and write to the `ideas` collection.  To fulfill the requirement that all users can view all ideas, there is no user-specific data or nested subcollections. This simplifies the security rules since all documents in the collection have the same access rules.\n\nThis structure ensures Authorization Independence since there are no dependencies on data from other documents or collections. It also satisfies the 'Rules are not Filters' (QAPs) principle, as list operations do not require complex filtering based on user roles or permissions."
+  }
+}

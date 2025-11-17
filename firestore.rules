@@ -1,0 +1,33 @@
+/**
+ * @fileoverview Firestore Security Rules for the Idea submission application.
+ *
+ * Core Philosophy:
+ * This ruleset allows any user (signed in or anonymous) to read and write ideas. There are no authorization checks based on user identity.
+ *
+ * Data Structure:
+ * All ideas are stored in the top-level `/ideas/{ideaId}` collection. Each document represents a single idea.
+ *
+ * Key Security Decisions:
+ * - No authorization is required for read or write operations, which means any user can create, modify, or delete ideas.
+ * - User listing is allowed since all ideas are public.
+ * - Data validation is disabled, allowing any data to be written.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Allows any user to read and write ideas.
+     * @path /ideas/{ideaId}
+     * @allow (create) - Any user can create an idea.
+     * @allow (get, list) - Any user can read an idea.
+     * @allow (update, delete) - Any user can update or delete an idea.
+     * @deny (none) - There are no restrictions on any operations.
+     * @principle No authorization is enforced. Any user can read and write data.
+     */
+    match /ideas/{ideaId} {
+      allow get, list: if true;
+      allow create, update, delete: if true;
+    }
+  }
+}
