@@ -43,7 +43,9 @@ const rankIdeasByCreativityPrompt = ai.definePrompt({
   2.  *Chủ đề "Smart Life" (30%)*: Ý tưởng phải liên quan mật thiết đến việc cải thiện cuộc sống thông minh (nhà thông minh, thành phố thông minh, sức khỏe thông minh, v.v.).
   3.  *Tính khả thi & Tác động (30%)*: Ý tưởng phải có tính khả thi về mặt công nghệ và có khả năng giải quyết một vấn đề thực tế của con người.
 
-  Phần Phân tích (analysis) phải *ngắn gọn, súc tích*, giải thích rõ ràng điểm số được cho dựa trên 3 tiêu chí trên. Sử dụng markdown để định dạng (in đậm, xuống dòng, danh sách).
+  Phần Phân tích (analysis) phải *ngắn gọn, súc tích*, và **bắt buộc** phải sử dụng markdown để định dạng (in đậm, danh sách gạch đầu dòng). Ví dụ:
+  *   **Tiêu chí 1:** Giải thích...
+  *   **Tiêu chí 2:** Giải thích...
 
   Phần Nguồn (source) phải bao gồm các liên kết (dưới dạng markdown, ví dụ: [Tên trang web](https://example.com)) đến các bài báo, dự án, hoặc sản phẩm đã tồn tại để chứng minh cho lập luận của bạn về "Tính mới". Nếu không tìm thấy, hãy để trống. Không thêm thuộc tính target vào link.
   `,
